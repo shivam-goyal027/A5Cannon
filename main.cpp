@@ -83,7 +83,6 @@ vector<pair<pair<int,int>,int> > update_enemy_cannons(int **board,pair<int,int> 
 		}
 	}
 	return res;
-
 }
 
 vector<pair<pair<int,int>,int> > update_cannons(int **board,pair<int,int> *Soldier,int n,int m){
@@ -144,7 +143,6 @@ vector<pair<pair<int,int>,int> > update_cannons(int **board,pair<int,int> *Soldi
 		}
 	}
 	return res;
-
 }
 
 void do_move_enemy(moves M,int **board, pair<int,int> *Soldier,pair<int,int> *EnemySoldier,pair<int,int> *Townhall,pair<int,int> *EnemyTownhall){
@@ -209,7 +207,7 @@ void do_move_enemy(moves M,int **board, pair<int,int> *Soldier,pair<int,int> *En
 	}
 }
 
-void do_move(moves M,int **board, pair<int,int> *Soldier,pair<int,int> *EnemySoldier,pair<int,int> *Townhall,pair<int,int> *EnemyTownhall){
+void do_move(moves M,int **board, pair<int,int> *Soldier, pair<int,int> *EnemySoldier, pair<int,int> *Townhall, pair<int,int> *EnemyTownhall){
 	int x1=M.b;
 	int y1=M.c;
 	int x2=M.e;
@@ -717,7 +715,472 @@ vector<moves> valid_moves(int **board, pair<int,int> *Soldier,int n,int m,vector
 	return ans;
 }
 
+int utility(pair<int,int> *Townhall, pair<int,int> *EnemyTownhall){
+	if(Townhall[0]<=2 && EnemyTownhall[0]==4){
+		return INT_MIN+10;
+	}
+	if(Townhall[0]<=2 && EnemyTownhall[0]==3){
+		return INT_MIN+20;
+	}
+	if(EnemyTownhall[0]<=2 && Townhall[0]==4){
+		return INT_MAX-10;
+	}
+	if(EnemyTownhall[0]<=2 && Townhall[0]==3){
+		return INT_MAX-20;
+	}
+	else{
+		return 0; //weigthForOurTownhall*(NumberofourTownhall) - weigthForTheirTownhall*(NumberoftheirTownhall);
+	}
+	return 0;
+}
 
+bool terminal(int **board, pair<int,int> *Soldier,int n,int m,vector<pair<pair<int,int>,int> > cannon){
+	vector<moves> v = valid_moves(board, Soldier, n, m, cannon);
+	if(v.size()==0)
+		return true;
+	return false;
+}
+
+bool terminal_emeny(int **board, pair<int,int> *EnemySoldier,int n,int m,vector<pair<pair<int,int>,int> > Enemycannon){
+	vector<moves> v = valid_moves_enemy(board, EnemySoldier, n, m, Enemycannon);
+	if(v.size()==0)
+		return true;
+	return false;
+}
+
+int enemy_soldier_shoots(int **board, vector<pair<pair<int,int>,int> > Enemycannon, int n, int m){
+	int count = 0;
+	int x,y,head;
+	
+	for (int i=0;i<=Enemycannon.size();i++){
+		x = Enemycannon[i].first.first;
+		y = Enemycannon[i].first.second;
+		head = Enemycannon[i].second;
+		if(head==1){
+			if(board[x+2][y]==1)
+				count++;
+			if(x+3<m && board[x+3][y]==1)
+				count++;
+		}
+		if(head==-1){
+			if(board[x-2][y]==1)
+				count++;
+			if(x-3>=0 && board[x-3][y]==1)
+				count++;
+		}
+		if(head==2){
+			if(board[x][y+2]==1)
+				count++;
+			if(y+3<n && board[x][y+3]==1)
+				count++;
+		}
+		if(head==-2){
+			if(board[x][y-2]==1)
+				count++;
+			if(y-3>=0 && board[x][y-3]==1)
+				count++;
+		}
+		if(head==3){
+			if(board[x+2][y+2]==1)
+				count++;
+			if(y+3<n && x+3<m && board[x+3][y+3]==1)
+				count++;
+		}
+		if(head==-3){
+			if(board[x-2][y-2]==1)
+				count++;
+			if(y-3>=0 && x-3>=0 && board[x-3][y-3]==1)
+				count++;
+		}
+		if(head==4){
+			if(board[x+2][y-2]==1)
+				count++;
+			if(y-3>=0 && x+3<m && board[x+3][y-3]==1)
+				count++;
+		}
+		if(head==-4){
+			if(board[x-2][y+2]==1)
+				count++;
+			if(x-3>=0 && y+3<n && board[x-3][y+3]==1)
+				count++;
+		}
+	}	
+	return count;
+}
+
+int soldier_shoots(int **board, vector<pair<pair<int,int>,int> > cannon, int n, int m){
+	int count = 0;
+	int x,y,head;
+	
+	for (int i=0;i<=cannon.size();i++){
+		x = cannon[i].first.first;
+		y = cannon[i].first.second;
+		head = cannon[i].second;
+		if(head==1){
+			if(board[x+2][y]==-1)
+				count++;
+			if(x+3<m && board[x+3][y]==-1)
+				count++;
+		}
+		if(head==-1){
+			if(board[x-2][y]==-1)
+				count++;
+			if(x-3>=0 && board[x-3][y]==-1)
+				count++;
+		}
+		if(head==2){
+			if(board[x][y+2]==-1)
+				count++;
+			if(y+3<n && board[x][y+3]==-1)
+				count++;
+		}
+		if(head==-2){
+			if(board[x][y-2]==-1)
+				count++;
+			if(y-3>=0 && board[x][y-3]==-1)
+				count++;
+		}
+		if(head==3){
+			if(board[x+2][y+2]==-1)
+				count++;
+			if(y+3<n && x+3<m && board[x+3][y+3]==-1)
+				count++;
+		}
+		if(head==-3){
+			if(board[x-2][y-2]==-1)
+				count++;
+			if(y-3>=0 && x-3>=0 && board[x-3][y-3]==-1)
+				count++;
+		}
+		if(head==4){
+			if(board[x+2][y-2]==-1)
+				count++;
+			if(y-3>=0 && x+3<m && board[x+3][y-3]==-1)
+				count++;
+		}
+		if(head==-4){
+			if(board[x-2][y+2]==-1)
+				count++;
+			if(x-3>=0 && y+3<n && board[x-3][y+3]==-1)
+				count++;
+		}
+	}	
+	return count;
+}
+
+int enemy_townhall_shoots(int **board, vector<pair<pair<int,int>,int> > Enemycannon, int n, int m){
+	int count = 0;
+	int x,y,head;
+	
+	for (int i=0;i<=Enemycannon.size();i++){
+		x = Enemycannon[i].first.first;
+		y = Enemycannon[i].first.second;
+		head = Enemycannon[i].second;
+		if(head==1){
+			if(board[x+2][y]==2)
+				count++;
+			if(x+3<m && board[x+3][y]==2)
+				count++;
+		}
+		if(head==-1){
+			if(board[x-2][y]==2)
+				count++;
+			if(x-3>=0 && board[x-3][y]==2)
+				count++;
+		}
+		if(head==2){
+			if(board[x][y+2]==2)
+				count++;
+			if(y+3<n && board[x][y+3]==2)
+				count++;
+		}
+		if(head==-2){
+			if(board[x][y-2]==2)
+				count++;
+			if(y-3>=0 && board[x][y-3]==2)
+				count++;
+		}
+		if(head==3){
+			if(board[x+2][y+2]==2)
+				count++;
+			if(y+3<n && x+3<m && board[x+3][y+3]==2)
+				count++;
+		}
+		if(head==-3){
+			if(board[x-2][y-2]==2)
+				count++;
+			if(y-3>=0 && x-3>=0 && board[x-3][y-3]==2)
+				count++;
+		}
+		if(head==4){
+			if(board[x+2][y-2]==2)
+				count++;
+			if(y-3>=0 && x+3<m && board[x+3][y-3]==2)
+				count++;
+		}
+		if(head==-4){
+			if(board[x-2][y+2]==2)
+				count++;
+			if(x-3>=0 && y+3<n && board[x-3][y+3]==2)
+				count++;
+		}
+	}	
+	return count;
+}
+
+int townhall_shoots(int **board, vector<pair<pair<int,int>,int> > cannon, int n, int m){
+	int count = 0;
+	int x,y,head;
+	
+	for (int i=0;i<=cannon.size();i++){
+		x = cannon[i].first.first;
+		y = cannon[i].first.second;
+		head = cannon[i].second;
+		if(head==1){
+			if(board[x+2][y]==-2)
+				count++;
+			if(x+3<m && board[x+3][y]==-2)
+				count++;
+		}
+		if(head==-1){
+			if(board[x-2][y]==-2)
+				count++;
+			if(x-3>=0 && board[x-3][y]==-2)
+				count++;
+		}
+		if(head==2){
+			if(board[x][y+2]==-2)
+				count++;
+			if(y+3<n && board[x][y+3]==-2)
+				count++;
+		}
+		if(head==-2){
+			if(board[x][y-2]==-2)
+				count++;
+			if(y-3>=0 && board[x][y-3]==-2)
+				count++;
+		}
+		if(head==3){
+			if(board[x+2][y+2]==-2)
+				count++;
+			if(y+3<n && x+3<m && board[x+3][y+3]==-2)
+				count++;
+		}
+		if(head==-3){
+			if(board[x-2][y-2]==-2)
+				count++;
+			if(y-3>=0 && x-3>=0 && board[x-3][y-3]==-2)
+				count++;
+		}
+		if(head==4){
+			if(board[x+2][y-2]==-2)
+				count++;
+			if(y-3>=0 && x+3<m && board[x+3][y-3]==-2)
+				count++;
+		}
+		if(head==-4){
+			if(board[x-2][y+2]==-2)
+				count++;
+			if(x-3>=0 && y+3<n && board[x-3][y+3]==-2)
+				count++;
+		}
+	}	
+	return count;
+}
+
+int eval(int **board, pair<int,int> *Soldier,pair<int,int> *EnemySoldier, pair<int,int> *Townhall, pair<int,int> *EnemyTownhall, vector<pair<pair<int,int>,int> > cannon, vector<pair<pair<int,int>,int> > Enemycannon){
+	int weight_soldier = 2;
+	int weight_soldier_fire = 0.5;
+	int weight_cannon = 0;
+	int weight_townhall = 100;
+	int weight_townhall_fire = 30;	
+	
+	if(Townhall[0]<=2){
+		return INT_MIN+10;
+	}
+	else if(EnemyTownhall[0]<=2){
+		return INT_MAX-10;
+	}
+
+	int ss = soldier_shoots(board, cannon, n, m);
+	int ess = enemy_soldier_shoots(board, Enemycannon, n, m);
+	int ts = townhall_shoots(board, cannon, n, m);
+	int ets = enemy_townhall_shoots(board, Enemycannon, n, m);
+
+	return weight_soldier*(Soldier[0]-EnemySoldier[0])+weight_soldier_fire*(ss - ess)+ weight_cannon*(cannon.size()-Enemycannon.size()) + weight_townhall*(Townhall[0]-EnemyTownhall[0])+ weight_townhall_fire*(ts-ets);
+}
+int cutoff = 3;
+
+pair<moves, int> min_value(int **board, int n, int m, int alpha, int beta, moves ms, int min_val, pair<int,int> *Soldier, pair<int,int> *EnemySoldier, pair<int,int> *Townhall, pair<int,int> *EnemyTownhall, vector<pair<pair<int,int>,int> > cannon, vector<pair<pair<int,int>,int> > Enemycannon){
+	min_val++;
+	if (terminal_emeny())
+		return make_pair(ms, -1*utility());
+	if(yl>cutoff)
+		return make_pair(ms, eval());
+
+	vector<moveStruct> v = valid_moves_enemy(board);
+	//cout<<"enemy "<<v.size()<<endl;
+	pair<moveStruct, int> min_child;
+	min_child.second=INT_MAX;
+
+	for(int i=0;i<v.size();i++){
+		//cout<<"v.size() = "<<v.size()<<endl;
+		// cout<<"Enemy Move "<<v[i].a[0]<<v[i].a[1]<<v[i].a[2]<<v[i].a[3]<<v[i].a[4]<<v[i].a[5]<<"    level = "<<yl<<endl;
+
+		map<pair<int,int>,Soldier*> temp_smap = smap;
+		map<pair<int,int>,EnemySoldier*> temp_emap = emap;
+		map<pair<int,int>,Townhall*> temp_tmap = tmap;
+		map<pair<int,int>,Townhall*> temp_etmap = etmap;
+		int a[n][m];
+		for(int i=0;i<n;i++){
+			for(int j=0;j<m;j++){
+				a[i][j]=board[i][j];
+			}
+		}
+		// cout<<"p ";
+		do_move(v[i]);
+		// cout<<"q ";
+		update_heads();
+		
+
+		pair<moveStruct, int> child = max_value(board, n, m, alpha, beta, v[i], min_val, temp_soldier, temp_enemy_soldier, temp_townhall, temp_enemy_townhall, new_cannon, new_enemy_cannon);
+		smap = temp_smap; emap = temp_emap; tmap = temp_tmap; etmap = temp_etmap;
+		for(int i=0;i<n;i++){
+			for(int j=0;j<m;j++){
+				board[i][j]=a[i][j];
+			}
+		}
+		update_heads();
+		// cout<<"Print this"<<endl;
+		if(min_child.second>child.second){
+			// cout<<"here    4"<<endl;
+			min_child.second=child.second;
+			min_child.first=v[i];
+		}
+		beta = std::min(beta, child.second);
+		if(alpha>=beta){
+			return child;
+		}
+	}
+	return min_child;
+}
+
+pair<moveStruct, int> max_value(int **board, int n, int m, int alpha, int beta, moves ms, int max_val, pair<int,int> *Soldier, pair<int,int> *EnemySoldier, pair<int,int> *Townhall, pair<int,int> *EnemyTownhall, vector<pair<pair<int,int>,int> > cannon, vector<pair<pair<int,int>,int> > Enemycannon){
+	xl++;
+	if (terminal(board, Soldier, n, m, cannon))
+		return make_pair(ms, utility(Townhall, EnemyTownhall));
+	if(max_val>cutoff)
+		return make_pair(ms, eval(board, Soldier, EnemySoldier, Townhall, EnemyTownhall, cannon, Enemycannon));
+
+	vector<moves> v = valid_moves();
+	//cout<<v.size()<<endl;
+	pair<moves, int> max_child;
+	max_child.second=INT_MIN;
+
+	for(int i=0;i<v.size();i++){
+		//cout<<"v.size() = "<<v.size()<<endl;
+		// cout<<"Our Move "<<v[i].a[0]<<v[i].a[1]<<v[i].a[2]<<v[i].a[3]<<v[i].a[4]<<v[i].a[5]<<"    level = "<<xl<<endl;
+
+		pair<int, int> temp_soldier[(3*(m/2))+1];
+		copy(begin(Soldier), end(Soldier), begin(temp_soldier));
+
+		pair<int, int> temp_enemy_soldier[(3*(m/2))+1];
+		copy(begin(EnemySoldier), end(EnemySoldier), begin(temp_enemy_soldier));
+
+		pair<int, int> temp_townhall[(m/2)+1];
+		copy(begin(Townhall), end(Townhall), begin(temp_townhall));
+
+		pair<int, int> temp_enemy_townhall[(m/2)+1];
+		copy(begin(EnemyTownhall), end(EnemyTownhall), begin(temp_enemy_townhall));
+
+		int a[n][m];
+		for(int i=0;i<n;i++){
+			for(int j=0;j<m;j++){
+				a[i][j]=board[i][j];
+			}
+		}
+		// cout<<"a ";
+		do_move(v[i], board, temp_soldier, temp_enemy_soldier, temp_townhall, temp_enemy_townhall);
+		// cout<<"b ";
+		vector<pair<pair<int,int>,int> > new_cannon = update_cannons(board, Soldier, n, m);
+		vector<pair<pair<int,int>,int> > new_enemy_cannon = update_cannons(board, EnemySoldier, n, m);
+		// cout<<"c "<<endl;
+
+		pair<moves, int> child = min_value(board, n, m, alpha, beta, v[i], max_val, temp_soldier, temp_enemy_soldier, temp_townhall, temp_enemy_townhall, new_cannon, new_enemy_cannon);
+		
+		// copy(begin(temp_soldier), end(temp_soldier), begin(Soldier));
+		// copy(begin(temp_enemy_soldier), end(temp_enemy_soldier), begin(EnemySoldier));
+		// copy(begin(temp_townhall), end(temp_townhall), begin(Townhall));
+		// copy(begin(temp_enemy_townhall), end(temp_enemy_townhall), begin(EnemyTownhall));
+
+		// for(int i=0;i<n;i++){
+		// 	for(int j=0;j<m;j++){
+		// 		board[i][j]=a[i][j];
+		// 	}
+		// }
+
+		if(max_child.second<child.second){
+			max_child.second=child.second;
+			max_child.first=v[i];
+		}
+		
+		alpha = std::max(alpha, child.second);
+		if(alpha>=beta)
+			return child;
+	}
+	// cout<<max_child.first.a<<endl;
+	return max_child;
+
+}
+
+moves alpha_beta(int **board, int n, int m, pair<int,int> *Soldier,pair<int,int> *EnemySoldier, pair<int,int> *Townhall, pair<int,int> *EnemyTownhall, vector<pair<pair<int,int>,int> > cannon, vector<pair<pair<int,int>,int> > Enemycannon){
+	
+	// int a[n][m];
+	// for(int i=0;i<n;i++){
+	// 	for(int j=0;j<m;j++){
+	// 		a[i][j]=board[i][j];
+	// 	}
+	// }
+
+	moves temp;
+	temp.a='S'; temp.b='0'; temp.c='0'; temp.d='M'; temp.e='0'; temp.f='0';
+
+	// pair<int, int> temp_soldier[(3*(m/2))+1];
+	// copy(begin(Soldier), end(Soldier), begin(temp_soldier));
+
+	// pair<int, int> temp_enemy_soldier[(3*(m/2))+1];
+	// copy(begin(EnemySoldier), end(EnemySoldier), begin(temp_enemy_soldier));
+
+	// pair<int, int> temp_townhall[(m/2)+1];
+	// copy(begin(Townhall), end(Townhall), begin(temp_townhall));
+
+	// pair<int, int> temp_enemy_townhall[(m/2)+1];
+	// copy(begin(EnemyTownhall), end(EnemyTownhall), begin(temp_enemy_townhall));
+
+	pair<moves, int> ans = max_value(board, n, m, INT_MIN, INT_MAX, temp, -1, Soldier, EnemySoldier, Townhall, EnemyTownhall, cannon, Enemycannon);
+	// cout<<"Complete"<<endl;
+	// for(int i=0;i<n;i++){
+	// 	for(int j=0;j<m;j++){
+	// 		board[i][j]=a[i][j];
+	// 	}
+	// }
+	// copy(begin(temp_soldier), end(temp_soldier), begin(Soldier));
+	// copy(begin(temp_enemy_soldier), end(temp_enemy_soldier), begin(EnemySoldier));
+	// copy(begin(temp_townhall), end(temp_townhall), begin(Townhall));
+	// copy(begin(temp_enemy_townhall), end(temp_enemy_townhall), begin(EnemyTownhall));
+
+	// For Debugging
+	// cout<<"yes"<<endl;
+	// cout<<ans.first.a[0]<<" ";
+	// cout<<ans.first.a[1]<<" ";
+	// cout<<ans.first.a[2]<<" ";
+	// cout<<ans.first.a[3]<<" ";
+	// cout<<ans.first.a[4]<<" ";
+	// cout<<ans.first.a[5]<<endl;
+	// cout<<"no"<<endl;
+	// cout<<"now"<<endl;
+	return ans.first;
+}
 
 int main(int argc, char* argv[]){
 	int id,n,m ,t;
