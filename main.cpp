@@ -91,6 +91,7 @@ vector<pair<pair<int,int>,int> > update_cannons(int **board,pair<int,int> *Soldi
 	int x,y;
 	for (int i=1;i<=3*(m/2);i++){
 		x=Soldier[i].first;y=Soldier[i].second;
+		//cerr<<x<<","<<y<<endl;
 		if(x!=-1){
 			if(x-2>=0){
 				if(board[x-1][y]==1 && board[x-2][y]==1 && x+1<m-1){
@@ -391,12 +392,12 @@ vector<moves> valid_moves_for_soldier(int **board, pair<int,int> pos,int n,int m
     }
     //Sideways
     if(x-1>=0 && y<n){
-    	if(board[x-1][y]==-2 || board[x-1][y]==1){
+    	if(board[x-1][y]==-2 || board[x-1][y]==-1){
     		vm.a='S';vm.b=(x);vm.c=(y);vm.d='M';vm.e=(x-1);vm.f=(y);ans.push_back(vm);
     	}
     }
     if(x+1<m && y<n){
-    	if(board[x+1][y]==-2 || board[x+1][y]==1){
+    	if(board[x+1][y]==-2 || board[x+1][y]==-1){
     		vm.a='S';vm.b=(x);vm.c=(y);vm.d='M';vm.e=(x+1);vm.f=(y);ans.push_back(vm);
     	}
     }
@@ -716,6 +717,8 @@ vector<moves> valid_moves(int **board, pair<int,int> *Soldier,int n,int m,vector
 	return ans;
 }
 
+
+
 int main(int argc, char* argv[]){
 	int id,n,m ,t;
 	cin>>id>>n>>m>>t;
@@ -741,21 +744,21 @@ int main(int argc, char* argv[]){
 	pair<int,int> *Soldier = new pair<int,int>[3*(m/2)+1];
 	Soldier[0]=make_pair(3*(m/2),0);
 	for(int i=0;i<3*(m/2);i++){
-		Soldier[i+1]= (make_pair(2*i/3+1,i%3));
+		Soldier[i+1]= (make_pair((2*(i/3))+1,i%3));
 		if(i%3==0){
-			Cannon.push_back(make_pair((make_pair(2*i/3+1,i%3)),2));
+			Cannon.push_back(make_pair((make_pair((2*(i/3))+1,(i%3) )),2));
 		}
-		board[2*(i/3)+1][i%3]=1;
+		board[(2*(i/3))+1][i%3]=1;
 	}
 
 	pair<int,int> *EnemySoldier=new pair<int,int>[3*(m/2)+1];
 	EnemySoldier[0]=make_pair(3*(m/2),0);
 	for(int i=0;i<3*(m/2);i++){
-		EnemySoldier[i+1]= (make_pair(2*i/3,n-1-i%3));
+		EnemySoldier[i+1]= (make_pair(2*(i/3),n-1-i%3));
 		if(i%3==0){
-			Cannon.push_back(make_pair((make_pair(2*i/3,n-1-i%3)),-2));
+			Cannon.push_back(make_pair((make_pair((2*(i/3)),n-1-(i%3) )),-2));
 		}
-		board[2*(i/3)][n-1-i%3]=-1;
+		board[2*(i/3)][n-1-(i%3)]=-1;
 	}
 
 	pair<int,int> *Townhall=new pair<int,int>[(m/2)+1];
@@ -768,17 +771,21 @@ int main(int argc, char* argv[]){
 	pair<int,int> *EnemyTownhall=new pair<int,int>[(m/2)+1];
 	EnemyTownhall[0]=make_pair((m/2),0);
 	for(int i=0;i<(m/2);i++){
-		EnemyTownhall[i+1]= (make_pair(2*i+1,n-1));
-		board[2*i+1][n-1]=-2;
+		EnemyTownhall[i+1]= (make_pair((2*i)+1,n-1));
+		board[(2*i)+1][n-1]=-2;
 	}
+	cerr<<"id="<<id<<endl;
 	if(id==1){
 		while(true){
 			v=valid_moves_enemy(board,EnemySoldier,n,m,EnemyCannon);
-			M=v[rand()%(v.size())];
-			cout<<M.a<<" "<<M.b<<" "<<M.c<<" "<<M.d<<" "<<M.e<<" "<<M.f;
+			int r=rand()%(v.size());
+			M=v[r];
+			cerr<<v[r].a<<endl;
+			cout<<M.a<<" "<<M.b<<" "<<M.c<<" "<<M.d<<" "<<M.e<<" "<<M.f<<endl;
 			do_move_enemy(M,board,Soldier,EnemySoldier,Townhall,EnemyTownhall);
 			Cannon =update_cannons(board,Soldier,n,m);
 			EnemyCannon=update_enemy_cannons(board,EnemySoldier,n,m);
+			cerr<<"done"<<endl;
 			cin>>M.a>>M.b>>M.c>>M.d>>M.e>>M.f;
 			do_move(M,board,Soldier,EnemySoldier,Townhall,EnemyTownhall); 
 			Cannon =update_cannons(board,Soldier,n,m);
@@ -788,13 +795,13 @@ int main(int argc, char* argv[]){
 	else{
 		while(true){
 			cin>>M.a>>M.b>>M.c>>M.d>>M.e>>M.f;
-			do_move(M,board,Soldier,EnemySoldier,Townhall,EnemyTownhall); 
+			do_move_enemy(M,board,Soldier,EnemySoldier,Townhall,EnemyTownhall); 
 			Cannon =update_cannons(board,Soldier,n,m);
 			EnemyCannon=update_enemy_cannons(board,EnemySoldier,n,m);
-			v=valid_moves_enemy(board,EnemySoldier,n,m,EnemyCannon);
+			v=valid_moves(board,Soldier,n,m,Cannon);
 			M=v[rand()%(v.size())];
-			cout<<M.a<<" "<<M.b<<" "<<M.c<<" "<<M.d<<" "<<M.e<<" "<<M.f;
-			do_move_enemy(M,board,Soldier,EnemySoldier,Townhall,EnemyTownhall);
+			cout<<M.a<<" "<<M.b<<" "<<M.c<<" "<<M.d<<" "<<M.e<<" "<<M.f<<endl;
+			do_move(M,board,Soldier,EnemySoldier,Townhall,EnemyTownhall);
 			Cannon =update_cannons(board,Soldier,n,m);
 			EnemyCannon=update_enemy_cannons(board,EnemySoldier,n,m);
 		}
