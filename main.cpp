@@ -314,36 +314,37 @@ bool adjacent(int **board,int x, int y,int n,int m){
 	return false;
 }
 
-vector<moves> valid_moves_for_enemy_soldier(int **board, pair<int,int> pos,int n,int m){
+pair<vector<moves>,vector<moves> > valid_moves_for_enemy_soldier(int **board, pair<int,int> pos,int n,int m){
 	moves vm;
-	vector<moves> ans;
+	vector<moves> ans1;
+	vector<moves> ans2;
 	int x = pos.first;
 	int y = pos.second;
 	//Normal moves
     if(x-1>=0 && y-1>=0){
     	if(board[x-1][y-1]!=-2 && board[x-1][y-1]!=-1){
-    		vm.a='S';vm.b=(x);vm.c=(y);vm.d='M';vm.e=(x-1);vm.f=(y-1);ans.push_back(vm);
+    		vm.a='S';vm.b=(x);vm.c=(y);vm.d='M';vm.e=(x-1);vm.f=(y-1);if(board[x-1][y-1]==0) ans2.push_back(vm); else ans1.push_back(vm);
     	}
     }
     if(x>=0 && y-1>=0){
     	if(board[x][y-1]!=-2 && board[x][y-1]!=-1){
-    		vm.a='S';vm.b=(x);vm.c=(y);vm.d='M';vm.e=(x);vm.f=(y-1);ans.push_back(vm);
+    		vm.a='S';vm.b=(x);vm.c=(y);vm.d='M';vm.e=(x);vm.f=(y-1);if(board[x][y-1]==0) ans2.push_back(vm); else ans1.push_back(vm);
     	}
     }
     if(x+1<m && y-1>=0){
     	if(board[x+1][y-1]!=-2 && board[x+1][y-1]!=-1){
-    		vm.a='S';vm.b=(x);vm.c=(y);vm.d='M';vm.e=(x+1);vm.f=(y-1);ans.push_back(vm);
+    		vm.a='S';vm.b=(x);vm.c=(y);vm.d='M';vm.e=(x+1);vm.f=(y-1);if(board[x+1][y-1]==0) ans2.push_back(vm); else ans1.push_back(vm);
     	}
     }
     //Sideways
     if(x-1>=0 && y<n){
     	if(board[x-1][y]==2 || board[x-1][y]==1){
-    		vm.a='S';vm.b=(x);vm.c=(y);vm.d='M';vm.e=(x-1);vm.f=(y);ans.push_back(vm);
+    		vm.a='S';vm.b=(x);vm.c=(y);vm.d='M';vm.e=(x-1);vm.f=(y);ans1.push_back(vm);
     	}
     }
     if(x+1<m && y<n){
     	if(board[x+1][y]==2 || board[x+1][y]==1){
-    		vm.a='S';vm.b=(x);vm.c=(y);vm.d='M';vm.e=(x+1);vm.f=(y);ans.push_back(vm);
+    		vm.a='S';vm.b=(x);vm.c=(y);vm.d='M';vm.e=(x+1);vm.f=(y);ans1.push_back(vm);
     	}
     }
     //Retreat
@@ -351,55 +352,57 @@ vector<moves> valid_moves_for_enemy_soldier(int **board, pair<int,int> pos,int n
     	if(y+2<n){
     		if(x-2>=0){
     			if(board[x-2][y+2]!=-2 && board[x-2][y+2]!=-1){
-    				vm.a='S';vm.b=(x);vm.c=(y);vm.d='M';vm.e=(x-2);vm.f=(y+2);ans.push_back(vm);
+    				vm.a='S';vm.b=(x);vm.c=(y);vm.d='M';vm.e=(x-2);vm.f=(y+2);if(board[x-2][y+2]==0) ans2.push_back(vm); else ans1.push_back(vm);
     			}
     		}
 	    	if(x>=0){
 	    		if(board[x][y+2]!=-2 && board[x][y+2]!=-1){
-    				vm.a='S';vm.b=(x);vm.c=(y);vm.d='M';vm.e=(x);vm.f=(y+2);ans.push_back(vm);
+    				vm.a='S';vm.b=(x);vm.c=(y);vm.d='M';vm.e=(x);vm.f=(y+2);if(board[x][y+2]==0) ans2.push_back(vm); else ans1.push_back(vm);
     			}
 	    	}
 	    	if(x+2<m){
 	    		if(board[x+2][y+2]!=-2 && board[x+2][y+2]!=-1){
-    				vm.a='S';vm.b=(x);vm.c=(y);vm.d='M';vm.e=(x+2);vm.f=(y+2);ans.push_back(vm);
+    				vm.a='S';vm.b=(x);vm.c=(y);vm.d='M';vm.e=(x+2);vm.f=(y+2);if(board[x+2][y+2]==0) ans2.push_back(vm); else ans1.push_back(vm);
     			}
 	    	}
     	}   	
     }
 
-    return ans;
+	return make_pair(ans1,ans2);
 }
 
-vector<moves> valid_moves_for_soldier(int **board, pair<int,int> pos,int n,int m){
+pair<vector<moves>,vector<moves> > valid_moves_for_soldier(int **board, pair<int,int> pos,int n,int m){
 	moves vm;
-	vector<moves> ans;
+	vector<moves> ans1;
+	vector<moves> ans2;
 	int x = pos.first;
 	int y = pos.second;
 	//Normal moves
     if(x-1>=0 && y+1<n){
     	if(board[x-1][y+1]!=2 && board[x-1][y+1]!=1){
-    		vm.a='S';vm.b=(x);vm.c=(y);vm.d='M';vm.e=(x-1);vm.f=(y+1);ans.push_back(vm);
+    		vm.a='S';vm.b=(x);vm.c=(y);vm.d='M';vm.e=(x-1);vm.f=(y+1);
+    		if(board[x-1][y+1]==0) ans2.push_back(vm); else ans1.push_back(vm);
     	}
     }
     if(x>=0 && y+1<n){
     	if(board[x][y+1]!=2 && board[x][y+1]!=1){
-    		vm.a='S';vm.b=(x);vm.c=(y);vm.d='M';vm.e=(x);vm.f=(y+1);ans.push_back(vm);
+    		vm.a='S';vm.b=(x);vm.c=(y);vm.d='M';vm.e=(x);vm.f=(y+1);if(board[x][y+1]==0) ans2.push_back(vm); else ans1.push_back(vm);
     	}
     }
     if(x+1<m && y+1<n){
     	if(board[x+1][y+1]!=2 && board[x+1][y+1]!=1){
-    		vm.a='S';vm.b=(x);vm.c=(y);vm.d='M';vm.e=(x+1);vm.f=(y+1);ans.push_back(vm);
+    		vm.a='S';vm.b=(x);vm.c=(y);vm.d='M';vm.e=(x+1);vm.f=(y+1);if(board[x+1][y+1]==0) ans2.push_back(vm); else ans1.push_back(vm);
     	}
     }
     //Sideways
     if(x-1>=0 && y<n){
     	if(board[x-1][y]==-2 || board[x-1][y]==-1){
-    		vm.a='S';vm.b=(x);vm.c=(y);vm.d='M';vm.e=(x-1);vm.f=(y);ans.push_back(vm);
+    		vm.a='S';vm.b=(x);vm.c=(y);vm.d='M';vm.e=(x-1);vm.f=(y);ans1.push_back(vm);
     	}
     }
     if(x+1<m && y<n){
     	if(board[x+1][y]==-2 || board[x+1][y]==-1){
-    		vm.a='S';vm.b=(x);vm.c=(y);vm.d='M';vm.e=(x+1);vm.f=(y);ans.push_back(vm);
+    		vm.a='S';vm.b=(x);vm.c=(y);vm.d='M';vm.e=(x+1);vm.f=(y);ans1.push_back(vm);
     	}
     }
     //Retreat
@@ -407,23 +410,23 @@ vector<moves> valid_moves_for_soldier(int **board, pair<int,int> pos,int n,int m
     	if(y-2>=0){
     		if(x-2>=0){
     			if(board[x-2][y-2]!=2 && board[x-2][y-2]!=1){
-    				vm.a='S';vm.b=(x);vm.c=(y);vm.d='M';vm.e=(x-2);vm.f=(y-2);ans.push_back(vm);
+    				vm.a='S';vm.b=(x);vm.c=(y);vm.d='M';vm.e=(x-2);vm.f=(y-2);if(board[x-2][y-2]==0) ans2.push_back(vm); else ans1.push_back(vm);
     			}
     		}
 	    	if(x>=0){
 	    		if(board[x][y-2]!=2 && board[x][y-2]!=1){
-    				vm.a='S';vm.b=(x);vm.c=(y);vm.d='M';vm.e=(x);vm.f=(y-2);ans.push_back(vm);
+    				vm.a='S';vm.b=(x);vm.c=(y);vm.d='M';vm.e=(x);vm.f=(y-2);if(board[x][y-2]==0) ans2.push_back(vm); else ans1.push_back(vm);
     			}
 	    	}
 	    	if(x+2<m){
 	    		if(board[x+2][y-2]!=2 && board[x+2][y-2]!=1){
-    				vm.a='S';vm.b=(x);vm.c=(y);vm.d='M';vm.e=(x+2);vm.f=(y-2);ans.push_back(vm);
+    				vm.a='S';vm.b=(x);vm.c=(y);vm.d='M';vm.e=(x+2);vm.f=(y-2);if(board[x+2][y-2]==0) ans2.push_back(vm); else ans1.push_back(vm);
     			}
 	    	}
     	}   	
     }
 
-    return ans;
+    return make_pair(ans1,ans2);
 }
 
 vector<moves> cannon_shift_enemy(int **board,vector<pair<pair<int,int>,int> > Enemycannon,int n,int m){
@@ -530,27 +533,27 @@ vector<moves> cannon_shift(int **board,vector<pair<pair<int,int>,int> > cannon,i
 	return ans;
 }
 
-vector<moves> bullet_fires_enemy(int **board,vector<pair<pair<int,int>,int> > Enemycannon,int n,int m){
+pair<vector<moves>,vector<moves> > bullet_fires_enemy(int **board,pair<pair<int,int>,int> Enemycannon,int n,int m){
 	int x,y,head;
-	vector<moves> ans;
+	vector<moves> ans1;
+	vector<moves> ans2;
 	moves vm;
-	for(int i=0;i<Enemycannon.size();i++){
-		x=(Enemycannon[i].first).first;
-		y=(Enemycannon[i].first).second;
-		head=Enemycannon[i].second;
+		x=(Enemycannon.first).first;
+		y=(Enemycannon.first).second;
+		head=Enemycannon.second;
 		if(head==1){
 			if(x+1<m){
 				if(board[x+1][y]==0){
-					if(x+2<m && board[x+2][y]!=-1 && board[x+2][y]!=-2) {vm.a='S';vm.b=(x);vm.c=(y);vm.d='B';vm.e=(x+2);vm.f=(y);ans.push_back(vm);}
-					if(x+3<m && board[x+3][y]!=-1 && board[x+3][y]!=-2) {vm.a='S';vm.b=(x);vm.c=(y);vm.d='B';vm.e=(x+3);vm.f=(y);ans.push_back(vm);}
+					if(x+2<m && board[x+2][y]!=-1 && board[x+2][y]!=-2) {vm.a='S';vm.b=(x);vm.c=(y);vm.d='B';vm.e=(x+2);vm.f=(y);if(board[x+2][y]==0) ans2.push_back(vm); else ans1.push_back(vm);}
+					if(x+3<m && board[x+3][y]!=-1 && board[x+3][y]!=-2) {vm.a='S';vm.b=(x);vm.c=(y);vm.d='B';vm.e=(x+3);vm.f=(y);if(board[x+3][y]==0) ans2.push_back(vm); else ans1.push_back(vm);}
 				}
 			}
 		}
 		else if(head==-1){
 			if(x-1>=0){
 				if(board[x-1][y]==0){
-					if(x-2>=0 && board[x-2][y]!=-1 && board[x-2][y]!=-2) {vm.a='S';vm.b=(x);vm.c=(y);vm.d='B';vm.e=(x-2);vm.f=(y);ans.push_back(vm);}
-					if(x-3>=0 && board[x-3][y]!=-1 && board[x-3][y]!=-2) {vm.a='S';vm.b=(x);vm.c=(y);vm.d='B';vm.e=(x-3);vm.f=(y);ans.push_back(vm);}
+					if(x-2>=0 && board[x-2][y]!=-1 && board[x-2][y]!=-2) {vm.a='S';vm.b=(x);vm.c=(y);vm.d='B';vm.e=(x-2);vm.f=(y);if(board[x-2][y]==0) ans2.push_back(vm); else ans1.push_back(vm);}
+					if(x-3>=0 && board[x-3][y]!=-1 && board[x-3][y]!=-2) {vm.a='S';vm.b=(x);vm.c=(y);vm.d='B';vm.e=(x-3);vm.f=(y);if(board[x-3][y]==0) ans2.push_back(vm); else ans1.push_back(vm);}
 				}
 			}
 			
@@ -558,8 +561,8 @@ vector<moves> bullet_fires_enemy(int **board,vector<pair<pair<int,int>,int> > En
 		else if(head==2){
 			if(y+1<n){
 				if(board[x][y+1]==0){
-					if(y+2<n && board[x][y+2]!=-1 && board[x][y+2]!=-2) {vm.a='S';vm.b=(x);vm.c=(y);vm.d='B';vm.e=(x);vm.f=(y+2);ans.push_back(vm);}
-					if(y+3<n && board[x][y+3]!=-1 && board[x][y+3]!=-2) {vm.a='S';vm.b=(x);vm.c=(y);vm.d='B';vm.e=(x);vm.f=(y+3);ans.push_back(vm);}
+					if(y+2<n && board[x][y+2]!=-1 && board[x][y+2]!=-2) {vm.a='S';vm.b=(x);vm.c=(y);vm.d='B';vm.e=(x);vm.f=(y+2);if(board[x][y+2]==0) ans2.push_back(vm); else ans1.push_back(vm);}
+					if(y+3<n && board[x][y+3]!=-1 && board[x][y+3]!=-2) {vm.a='S';vm.b=(x);vm.c=(y);vm.d='B';vm.e=(x);vm.f=(y+3);if(board[x][y+3]==0) ans2.push_back(vm); else ans1.push_back(vm);}
 				}
 			}
 			
@@ -567,68 +570,68 @@ vector<moves> bullet_fires_enemy(int **board,vector<pair<pair<int,int>,int> > En
 		else if(head==-2){
 			if(y-1>=0){
 				if(board[x][y-1]==0){
-					if(y-2>=0 && board[x][y-2]!=-1 && board[x][y-2]!=-2) {vm.a='S';vm.b=(x);vm.c=(y);vm.d='B';vm.e=(x);vm.f=(y-2);ans.push_back(vm);}
-					if(y-3>=0 && board[x][y-3]!=-1 && board[x][y-3]!=-2) {vm.a='S';vm.b=(x);vm.c=(y);vm.d='B';vm.e=(x);vm.f=(y-3);ans.push_back(vm);}
+					if(y-2>=0 && board[x][y-2]!=-1 && board[x][y-2]!=-2) {vm.a='S';vm.b=(x);vm.c=(y);vm.d='B';vm.e=(x);vm.f=(y-2);if(board[x][y-2]==0) ans2.push_back(vm); else ans1.push_back(vm);}
+					if(y-3>=0 && board[x][y-3]!=-1 && board[x][y-3]!=-2) {vm.a='S';vm.b=(x);vm.c=(y);vm.d='B';vm.e=(x);vm.f=(y-3);if(board[x][y-3]==0) ans2.push_back(vm); else ans1.push_back(vm);}
 				}
 			}
 		}
 		else if(head==3){
 			if(x+1<m && y+1<n){
 				if(board[x+1][y+1]==0){
-					if(y+2<n && x+2<m && board[x+2][y+2]!=-1 && board[x+2][y+2]!=-2) {vm.a='S';vm.b=(x);vm.c=(y);vm.d='B';vm.e=(x+2);vm.f=(y+2);ans.push_back(vm);}
-					if(y+3<n && x+3<m && board[x+3][y+3]!=-1 && board[x+3][y+3]!=-2) {vm.a='S';vm.b=(x);vm.c=(y);vm.d='B';vm.e=(x+3);vm.f=(y+3);ans.push_back(vm);}
+					if(y+2<n && x+2<m && board[x+2][y+2]!=-1 && board[x+2][y+2]!=-2) {vm.a='S';vm.b=(x);vm.c=(y);vm.d='B';vm.e=(x+2);vm.f=(y+2);if(board[x+2][y+2]==0) ans2.push_back(vm); else ans1.push_back(vm);}
+					if(y+3<n && x+3<m && board[x+3][y+3]!=-1 && board[x+3][y+3]!=-2) {vm.a='S';vm.b=(x);vm.c=(y);vm.d='B';vm.e=(x+3);vm.f=(y+3);if(board[x+3][y+3]==0) ans2.push_back(vm); else ans1.push_back(vm);}
 				}
 			}
 		}
 		else if(head==-3){
 			if(x-1>=0 && y-1>=0){
 				if(board[x-1][y-1]==0){
-					if(y-2>=0 && x-2>=0 && board[x-2][y-2]!=-1 && board[x-2][y-2]!=-2) {vm.a='S';vm.b=(x);vm.c=(y);vm.d='B';vm.e=(x-2);vm.f=(y-2);ans.push_back(vm);}
-					if(y-3>=0 && x-3>=0 && board[x-3][y-3]!=-1 && board[x-3][y-3]!=-2) {vm.a='S';vm.b=(x);vm.c=(y);vm.d='B';vm.e=(x-3);vm.f=(y-3);ans.push_back(vm);}
+					if(y-2>=0 && x-2>=0 && board[x-2][y-2]!=-1 && board[x-2][y-2]!=-2) {vm.a='S';vm.b=(x);vm.c=(y);vm.d='B';vm.e=(x-2);vm.f=(y-2);if(board[x-2][y-2]==0) ans2.push_back(vm); else ans1.push_back(vm);}
+					if(y-3>=0 && x-3>=0 && board[x-3][y-3]!=-1 && board[x-3][y-3]!=-2) {vm.a='S';vm.b=(x);vm.c=(y);vm.d='B';vm.e=(x-3);vm.f=(y-3);if(board[x-3][y-3]==0) ans2.push_back(vm); else ans1.push_back(vm);}
 				}
 			}
 		}
 		else if(head==4){
 			if(x+1<m && y-1>=0){
 				if(board[x+1][y-1]==0){
-					if(y-2>=0 && x+2<m && board[x+2][y-2]!=-1 && board[x+2][y-2]!=-2) {vm.a='S';vm.b=(x);vm.c=(y);vm.d='B';vm.e=(x+2);vm.f=(y-2);ans.push_back(vm);}
-					if(y-3>=0 && x+3<m && board[x+3][y-3]!=-1 && board[x+3][y-3]!=-2) {vm.a='S';vm.b=(x);vm.c=(y);vm.d='B';vm.e=(x+3);vm.f=(y-3);ans.push_back(vm);}
+					if(y-2>=0 && x+2<m && board[x+2][y-2]!=-1 && board[x+2][y-2]!=-2) {vm.a='S';vm.b=(x);vm.c=(y);vm.d='B';vm.e=(x+2);vm.f=(y-2);if(board[x+2][y-2]==0) ans2.push_back(vm); else ans1.push_back(vm);}
+					if(y-3>=0 && x+3<m && board[x+3][y-3]!=-1 && board[x+3][y-3]!=-2) {vm.a='S';vm.b=(x);vm.c=(y);vm.d='B';vm.e=(x+3);vm.f=(y-3);if(board[x+3][y-3]==0) ans2.push_back(vm); else ans1.push_back(vm);}
 				}
 			}
 		}
 		else if(head==-4){
 			if(x-1>=0 && y+1<n){
 				if(board[x-1][y+1]==0){
-					if(y+2<n && x-2>=0 && board[x-2][y+2]!=-1 && board[x-2][y+2]!=-2) {vm.a='S';vm.b=(x);vm.c=(y);vm.d='B';vm.e=(x-2);vm.f=(y+2);ans.push_back(vm);}
-					if(y+3<n && x-3>=0 && board[x-3][y+3]!=-1 && board[x-3][y+3]!=-2) {vm.a='S';vm.b=(x);vm.c=(y);vm.d='B';vm.e=(x-3);vm.f=(y+3);ans.push_back(vm);}
+					if(y+2<n && x-2>=0 && board[x-2][y+2]!=-1 && board[x-2][y+2]!=-2) {vm.a='S';vm.b=(x);vm.c=(y);vm.d='B';vm.e=(x-2);vm.f=(y+2);if(board[x-2][y+2]==0) ans2.push_back(vm); else ans1.push_back(vm);}
+					if(y+3<n && x-3>=0 && board[x-3][y+3]!=-1 && board[x-3][y+3]!=-2) {vm.a='S';vm.b=(x);vm.c=(y);vm.d='B';vm.e=(x-3);vm.f=(y+3);if(board[x-3][y+3]==0) ans2.push_back(vm); else ans1.push_back(vm);}
 				}
 			}
 		}
-	}
-	return ans;
+	
+	return make_pair(ans1,ans2);
 }
 
-vector<moves> bullet_fires(int **board,vector<pair<pair<int,int>,int> > cannon,int n,int m){
+pair<vector<moves>,vector<moves> > bullet_fires(int **board,pair<pair<int,int>,int> cannon,int n,int m){
 	int x,y,head;
-	vector<moves> ans;
+	vector<moves> ans1;
+	vector<moves> ans2;
 	moves vm;
-	for(int i=0;i<cannon.size();i++){
-		x=(cannon[i].first).first;
-		y=(cannon[i].first).second;
-		head=cannon[i].second;
+		x=(cannon.first).first;
+		y=(cannon.first).second;
+		head=cannon.second;
 		if(head==1){
 			if(x+1<m){
 				if(board[x+1][y]==0){
-					if(x+2<m && board[x+2][y]!=1 && board[x+2][y]!=2) {vm.a='S';vm.b=(x);vm.c=(y);vm.d='B';vm.e=(x+2);vm.f=(y);ans.push_back(vm);}
-					if(x+3<m && board[x+3][y]!=1 && board[x+3][y]!=2) {vm.a='S';vm.b=(x);vm.c=(y);vm.d='B';vm.e=(x+3);vm.f=(y);ans.push_back(vm);}
+					if(x+2<m && board[x+2][y]!=1 && board[x+2][y]!=2) {vm.a='S';vm.b=(x);vm.c=(y);vm.d='B';vm.e=(x+2);vm.f=(y);if(board[x+2][y]==0) ans2.push_back(vm); else ans1.push_back(vm);}
+					if(x+3<m && board[x+3][y]!=1 && board[x+3][y]!=2) {vm.a='S';vm.b=(x);vm.c=(y);vm.d='B';vm.e=(x+3);vm.f=(y);if(board[x+3][y]==0) ans2.push_back(vm); else ans1.push_back(vm);}
 				}
 			}
 		}
 		else if(head==-1){
 			if(x-1>=0){
 				if(board[x-1][y]==0){
-					if(x-2>=0 && board[x-2][y]!=1 && board[x-2][y]!=2) {vm.a='S';vm.b=(x);vm.c=(y);vm.d='B';vm.e=(x-2);vm.f=(y);ans.push_back(vm);}
-					if(x-3>=0 && board[x-3][y]!=1 && board[x-3][y]!=2) {vm.a='S';vm.b=(x);vm.c=(y);vm.d='B';vm.e=(x-3);vm.f=(y);ans.push_back(vm);}
+					if(x-2>=0 && board[x-2][y]!=1 && board[x-2][y]!=2) {vm.a='S';vm.b=(x);vm.c=(y);vm.d='B';vm.e=(x-2);vm.f=(y);if(board[x-2][y]==0) ans2.push_back(vm); else ans1.push_back(vm);}
+					if(x-3>=0 && board[x-3][y]!=1 && board[x-3][y]!=2) {vm.a='S';vm.b=(x);vm.c=(y);vm.d='B';vm.e=(x-3);vm.f=(y);if(board[x-3][y]==0) ans2.push_back(vm); else ans1.push_back(vm);}
 				}
 			}
 			
@@ -636,8 +639,8 @@ vector<moves> bullet_fires(int **board,vector<pair<pair<int,int>,int> > cannon,i
 		else if(head==2){
 			if(y+1<n){
 				if(board[x][y+1]==0){
-					if(y+2<n && board[x][y+2]!=1 && board[x][y+2]!=2) {vm.a='S';vm.b=(x);vm.c=(y);vm.d='B';vm.e=(x);vm.f=(y+2);ans.push_back(vm);}
-					if(y+3<n && board[x][y+3]!=1 && board[x][y+3]!=2) {vm.a='S';vm.b=(x);vm.c=(y);vm.d='B';vm.e=(x);vm.f=(y+3);ans.push_back(vm);}
+					if(y+2<n && board[x][y+2]!=1 && board[x][y+2]!=2) {vm.a='S';vm.b=(x);vm.c=(y);vm.d='B';vm.e=(x);vm.f=(y+2);if(board[x][y+2]==0) ans2.push_back(vm); else ans1.push_back(vm);}
+					if(y+3<n && board[x][y+3]!=1 && board[x][y+3]!=2) {vm.a='S';vm.b=(x);vm.c=(y);vm.d='B';vm.e=(x);vm.f=(y+3);if(board[x][y+3]==0) ans2.push_back(vm); else ans1.push_back(vm);}
 				}
 			}
 			
@@ -645,77 +648,92 @@ vector<moves> bullet_fires(int **board,vector<pair<pair<int,int>,int> > cannon,i
 		else if(head==-2){
 			if(y-1>=0){
 				if(board[x][y-1]==0){
-					if(y-2>=0 && board[x][y-2]!=1 && board[x][y-2]!=2) {vm.a='S';vm.b=(x);vm.c=(y);vm.d='B';vm.e=(x);vm.f=(y-2);ans.push_back(vm);}
-					if(y-3>=0 && board[x][y-3]!=1 && board[x][y-3]!=2) {vm.a='S';vm.b=(x);vm.c=(y);vm.d='B';vm.e=(x);vm.f=(y-3);ans.push_back(vm);}
+					if(y-2>=0 && board[x][y-2]!=1 && board[x][y-2]!=2) {vm.a='S';vm.b=(x);vm.c=(y);vm.d='B';vm.e=(x);vm.f=(y-2);if(board[x][y-2]==0) ans2.push_back(vm); else ans1.push_back(vm);}
+					if(y-3>=0 && board[x][y-3]!=1 && board[x][y-3]!=2) {vm.a='S';vm.b=(x);vm.c=(y);vm.d='B';vm.e=(x);vm.f=(y-3);if(board[x][y-3]==0) ans2.push_back(vm); else ans1.push_back(vm);}
 				}
 			}
 		}
 		else if(head==3){
 			if(x+1<m && y+1<n){
 				if(board[x+1][y+1]==0){
-					if(y+2<n && x+2<m && board[x+2][y+2]!=1 && board[x+2][y+2]!=2) {vm.a='S';vm.b=(x);vm.c=(y);vm.d='B';vm.e=(x+2);vm.f=(y+2);ans.push_back(vm);}
-					if(y+3<n && x+3<m && board[x+3][y+3]!=1 && board[x+3][y+3]!=2) {vm.a='S';vm.b=(x);vm.c=(y);vm.d='B';vm.e=(x+3);vm.f=(y+3);ans.push_back(vm);}
+					if(y+2<n && x+2<m && board[x+2][y+2]!=1 && board[x+2][y+2]!=2) {vm.a='S';vm.b=(x);vm.c=(y);vm.d='B';vm.e=(x+2);vm.f=(y+2);if(board[x+2][y+2]==0) ans2.push_back(vm); else ans1.push_back(vm);}
+					if(y+3<n && x+3<m && board[x+3][y+3]!=1 && board[x+3][y+3]!=2) {vm.a='S';vm.b=(x);vm.c=(y);vm.d='B';vm.e=(x+3);vm.f=(y+3);if(board[x+3][y+3]==0) ans2.push_back(vm); else ans1.push_back(vm);}
 				}
 			}
 		}
 		else if(head==-3){
 			if(x-1>=0 && y-1>=0){
 				if(board[x-1][y-1]==0){
-					if(y-2>=0 && x-2>=0 && board[x-2][y-2]!=1 && board[x-2][y-2]!=2) {vm.a='S';vm.b=(x);vm.c=(y);vm.d='B';vm.e=(x-2);vm.f=(y-2);ans.push_back(vm);}
-					if(y-3>=0 && x-3>=0 && board[x-3][y-3]!=1 && board[x-3][y-3]!=2) {vm.a='S';vm.b=(x);vm.c=(y);vm.d='B';vm.e=(x-3);vm.f=(y-3);ans.push_back(vm);}
+					if(y-2>=0 && x-2>=0 && board[x-2][y-2]!=1 && board[x-2][y-2]!=2) {vm.a='S';vm.b=(x);vm.c=(y);vm.d='B';vm.e=(x-2);vm.f=(y-2);if(board[x-2][y-2]==0) ans2.push_back(vm); else ans1.push_back(vm);}
+					if(y-3>=0 && x-3>=0 && board[x-3][y-3]!=1 && board[x-3][y-3]!=2) {vm.a='S';vm.b=(x);vm.c=(y);vm.d='B';vm.e=(x-3);vm.f=(y-3);if(board[x-3][y-3]==0) ans2.push_back(vm); else ans1.push_back(vm);}
 				}
 			}
 		}
 		else if(head==4){
 			if(x+1<m && y-1>=0){
 				if(board[x+1][y-1]==0){
-					if(y-2>=0 && x+2<m && board[x+2][y-2]!=1 && board[x+2][y-2]!=2) {vm.a='S';vm.b=(x);vm.c=(y);vm.d='B';vm.e=(x+2);vm.f=(y-2);ans.push_back(vm);}
-					if(y-3>=0 && x+3<m && board[x+3][y-3]!=1 && board[x+3][y-3]!=2) {vm.a='S';vm.b=(x);vm.c=(y);vm.d='B';vm.e=(x+3);vm.f=(y-3);ans.push_back(vm);}
+					if(y-2>=0 && x+2<m && board[x+2][y-2]!=1 && board[x+2][y-2]!=2) {vm.a='S';vm.b=(x);vm.c=(y);vm.d='B';vm.e=(x+2);vm.f=(y-2);if(board[x+2][y-2]==0) ans2.push_back(vm); else ans1.push_back(vm);}
+					if(y-3>=0 && x+3<m && board[x+3][y-3]!=1 && board[x+3][y-3]!=2) {vm.a='S';vm.b=(x);vm.c=(y);vm.d='B';vm.e=(x+3);vm.f=(y-3);if(board[x+3][y-3]==0) ans2.push_back(vm); else ans1.push_back(vm);}
 				}
 			}
 		}
 		else if(head==-4){
 			if(x-1>=0 && y+1<n){
 				if(board[x-1][y+1]==0){
-					if(y+2<n && x-2>=0 && board[x-2][y+2]!=1 && board[x-2][y+2]!=2) {vm.a='S';vm.b=(x);vm.c=(y);vm.d='B';vm.e=(x-2);vm.f=(y+2);ans.push_back(vm);}
-					if(y+3<n && x-3>=0 && board[x-3][y+3]!=1 && board[x-3][y+3]!=2) {vm.a='S';vm.b=(x);vm.c=(y);vm.d='B';vm.e=(x-3);vm.f=(y+3);ans.push_back(vm);}
+					if(y+2<n && x-2>=0 && board[x-2][y+2]!=1 && board[x-2][y+2]!=2) {vm.a='S';vm.b=(x);vm.c=(y);vm.d='B';vm.e=(x-2);vm.f=(y+2);if(board[x-2][y+2]==0) ans2.push_back(vm); else ans1.push_back(vm);}
+					if(y+3<n && x-3>=0 && board[x-3][y+3]!=1 && board[x-3][y+3]!=2) {vm.a='S';vm.b=(x);vm.c=(y);vm.d='B';vm.e=(x-3);vm.f=(y+3);if(board[x-3][y+3]==0) ans2.push_back(vm); else ans1.push_back(vm);}
 				}
 			}
 		}
-	}
-	return ans;
+	
+	return make_pair(ans1,ans2);
 }
 
 vector<moves> valid_moves_enemy(int **board, pair<int,int> *EnemySoldier,int n,int m,vector<pair<pair<int,int>,int> > Enemycannon){
-	vector<moves> valid_mv;
-	vector<moves> ans;
+	pair<vector<moves>,vector<moves> > valid_mv;
+	vector<moves> ans1;
+	vector<moves> ans2;
+	vector<moves> valid_mv1;
+	for(int i=0;i<Enemycannon.size();i++){
+		valid_mv=bullet_fires_enemy(board,Enemycannon[i],n,m);
+		ans1.insert(ans1.end(), valid_mv.first.begin(), valid_mv.first.end());
+		ans2.insert(ans2.end(), valid_mv.second.begin(), valid_mv.second.end());
+	}
 	for (int i=1;i<=3*(m/2);i++){
 		if(EnemySoldier[i].first!=-1){
 			valid_mv = valid_moves_for_enemy_soldier(board,EnemySoldier[i],n,m);
-			ans.insert(ans.end(), valid_mv.begin(), valid_mv.end());
+			ans1.insert(ans1.end(), valid_mv.first.begin(), valid_mv.first.end());
+			ans2.insert(ans2.end(), valid_mv.second.begin(), valid_mv.second.end());
 		}
 	}
-	valid_mv=cannon_shift_enemy(board,Enemycannon,n,m);
-	ans.insert(ans.end(), valid_mv.begin(), valid_mv.end());
-	valid_mv=bullet_fires_enemy(board,Enemycannon,n,m);
-	ans.insert(ans.end(), valid_mv.begin(), valid_mv.end());
-	return ans;
+	valid_mv1=cannon_shift_enemy(board,Enemycannon,n,m);
+	ans2.insert(ans2.end(), valid_mv1.begin(), valid_mv1.end());
+	ans1.insert(ans1.end(), ans2.begin(), ans2.end());
+	//cerr<<ans1.size()<<endl;
+	return ans1;
 }
 
 vector<moves> valid_moves(int **board, pair<int,int> *Soldier,int n,int m,vector<pair<pair<int,int>,int> > cannon){
-	vector<moves> valid_mv;
-	vector<moves> ans;
+	pair<vector<moves>,vector<moves> > valid_mv;
+	vector<moves> ans1;
+	vector<moves> ans2;
+	vector<moves> valid_mv1;
+	for(int i=0;i<cannon.size();i++){
+		valid_mv=bullet_fires(board,cannon[i],n,m);
+		ans1.insert(ans1.end(), valid_mv.first.begin(), valid_mv.first.end());
+		ans2.insert(ans2.end(), valid_mv.second.begin(), valid_mv.second.end());
+	}
 	for (int i=1;i<=3*(m/2);i++){
 		if(Soldier[i].first!=-1){
 			valid_mv = valid_moves_for_soldier(board,Soldier[i],n,m);
-			ans.insert(ans.end(), valid_mv.begin(), valid_mv.end());
+			ans1.insert(ans1.end(), valid_mv.first.begin(), valid_mv.first.end());
+			ans2.insert(ans2.end(), valid_mv.second.begin(), valid_mv.second.end());
 		}
 	}
-	valid_mv=cannon_shift(board,cannon,n,m);
-	ans.insert(ans.end(), valid_mv.begin(), valid_mv.end());
-	valid_mv=bullet_fires(board,cannon,n,m);
-	ans.insert(ans.end(), valid_mv.begin(), valid_mv.end());
-	return ans;
+	valid_mv1=cannon_shift(board,cannon,n,m);
+	ans2.insert(ans2.end(), valid_mv1.begin(), valid_mv1.end());
+	ans1.insert(ans1.end(), ans2.begin(), ans2.end());
+	return ans1;
 }
 
 int utility(pair<int,int> *Townhall, pair<int,int> *EnemyTownhall){
