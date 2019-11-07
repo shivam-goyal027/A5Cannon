@@ -193,7 +193,7 @@ void do_move_enemy(moves M,int **board, pair<int,int> *Soldier,pair<int,int> *En
 				i++;
 			}
 			Soldier[0]=make_pair(Soldier[0].first-1,0);
-		}else if(board[x2][y2]==-2){
+		}else if(board[x2][y2]==2){
 			while(true){
 				if(Townhall[i].first==x2 && Townhall[i].second==y2){
 					Townhall[i]=make_pair(-1,-1);
@@ -747,38 +747,7 @@ vector<moves> valid_moves(int **board, pair<int,int> *Soldier,int n,int m,vector
 	return ans1;
 }
 
-int utility(pair<int,int> *Townhall, pair<int,int> *EnemyTownhall){
-	if(Townhall[0].first<=2 && EnemyTownhall[0].first==4){
-		return INT_MIN+10;
-	}
-	if(Townhall[0].first<=2 && EnemyTownhall[0].first==3){
-		return INT_MIN+20;
-	}
-	if(EnemyTownhall[0].first<=2 && Townhall[0].first==4){
-		return INT_MAX-10;
-	}
-	if(EnemyTownhall[0].first<=2 && Townhall[0].first==3){
-		return INT_MAX-20;
-	}
-	else{
-		return 0; //weigthForOurTownhall*(NumberofourTownhall) - weigthForTheirTownhall*(NumberoftheirTownhall);
-	}
-	return 0;
-}
 
-bool terminal(int **board, pair<int,int> *Soldier,int n,int m,vector<pair<pair<int,int>,int> > cannon){
-	vector<moves> v = valid_moves(board, Soldier, n, m, cannon);
-	if(v.size()==0)
-		return true;
-	return false;
-}
-
-bool terminal_emeny(int **board, pair<int,int> *EnemySoldier,int n,int m,vector<pair<pair<int,int>,int> > Enemycannon){
-	vector<moves> v = valid_moves_enemy(board, EnemySoldier, n, m, Enemycannon);
-	if(v.size()==0)
-		return true;
-	return false;
-}
 ////can be optimised by combining or checking just for 4 townhalls/////////////
 int enemy_soldier_shoots(int **board, vector<pair<pair<int,int>,int> > Enemycannon, int n, int m){
 	int count = 0;
@@ -1052,7 +1021,7 @@ int eval(bool townhall_kill, int **board,int n,int m, pair<int,int> *Soldier,pai
 	return weight_soldier*(Soldier[0].first-EnemySoldier[0].first)+weight_soldier_fire*(ss - ess)+ weight_cannon*(cannon.size()-Enemycannon.size()) + weight_townhall*(Townhall[0].first-EnemyTownhall[0].first)+ weight_townhall_fire*(ts-ets);
 }
 
-int cutoff = 3;
+int cutoff = 4;
 
 int eval_enemy(bool townhall_kill, int **board,int n,int m, pair<int,int> *Soldier,pair<int,int> *EnemySoldier, pair<int,int> *Townhall, pair<int,int> *EnemyTownhall, vector<pair<pair<int,int>,int> > cannon, vector<pair<pair<int,int>,int> > Enemycannon){
 	if(townhall_kill)
@@ -1079,16 +1048,38 @@ int eval_enemy(bool townhall_kill, int **board,int n,int m, pair<int,int> *Soldi
 	return -(weight_soldier*(Soldier[0].first-EnemySoldier[0].first)+weight_soldier_fire*(ss - ess)+ weight_cannon*(cannon.size()-Enemycannon.size()) + weight_townhall*(Townhall[0].first-EnemyTownhall[0].first)+ weight_townhall_fire*(ts-ets));
 }
 
+int utility_enemy(bool flag,bool townhall_kill,pair<int,int> *Townhall, pair<int,int> *EnemyTownhall){
+	if(townhall_kill && EnemyTownhall[0].first==4){
+		return 1000;
+	}
+	if(Townhall[0].first<=2 && EnemyTownhall[0].first==4){
+		return INT_MAX-10;
+	}
+	if(Townhall[0].first<=2 && EnemyTownhall[0].first==3){
+		return INT_MAX-20;
+	}
+	if(EnemyTownhall[0].first<=2 && Townhall[0].first==4){
+		return INT_MIN+10;
+	}
+	if(EnemyTownhall[0].first<=2 && Townhall[0].first==3){
+		return INT_MIN+20;
+	}
+	if(flag)
+		return INT_MAX-20;
+	else
+		return INT_MAX-20;
+}
+
 pair<moves, int> min_value_enemy(bool townhall_kill,int **board, int n, int m, int alpha, int beta, moves ms, int min_val, pair<int,int> *Soldier, pair<int,int> *EnemySoldier, pair<int,int> *Townhall, pair<int,int> *EnemyTownhall, vector<pair<pair<int,int>,int> > cannon, vector<pair<pair<int,int>,int> > Enemycannon){
 	min_val++;
 	if(min_val>cutoff){
 		int x = eval_enemy(townhall_kill,board,n,m, Soldier, EnemySoldier, Townhall, EnemyTownhall, cannon, Enemycannon);
-		cerr<<x<<endl;
+		//cerr<<x<<endl;
 		return make_pair(ms, x);
 	}
 	vector<moves> v = valid_moves(board,Soldier,n,m,cannon);
-	if (v.size()==0)
-		return make_pair(ms, -1*utility(Townhall,EnemyTownhall));
+	if (v.size()==0 || EnemyTownhall[0].first<=2 ||  Townhall[0].first<=2)
+		return make_pair(ms, utility_enemy(true,townhall_kill,Townhall,EnemyTownhall));
 
 	pair<moves, int> min_child;
 	min_child.second=INT_MAX;
@@ -1135,7 +1126,6 @@ pair<moves, int> min_value_enemy(bool townhall_kill,int **board, int n, int m, i
 		}
 		beta = std::min(beta, min_child.second);
 	}
-	//cerr<<min_val<<"................"<<min_child.first.a<<min_child.first.b<<min_child.first.c<<min_child.first.d<<min_child.first.e<<min_child.first.f<<endl;
 
 	return min_child;
 }
@@ -1147,8 +1137,8 @@ pair<moves, int> max_value_enemy(bool townhall_kill,int **board, int n, int m, i
 
 	vector<moves> v = valid_moves_enemy(board,EnemySoldier,n,m,Enemycannon);
 
-	if (v.size()==0)
-		return make_pair(ms, utility(Townhall, EnemyTownhall));
+	if (v.size()==0 || EnemyTownhall[0].first<=2 ||  Townhall[0].first<=2)
+		return make_pair(ms, utility_enemy(false,townhall_kill,Townhall, EnemyTownhall));
 
 	pair<moves, int> max_child;
 	max_child.second=INT_MIN;
@@ -1212,13 +1202,38 @@ moves alpha_beta_enemy(int **board, int n, int m, pair<int,int> *Soldier,pair<in
 	return ans.first;
 }
 
+int utility(bool flag,bool townhall_kill,pair<int,int> *Townhall, pair<int,int> *EnemyTownhall){
+	
+	if(townhall_kill && Townhall[0].first==4){
+		return INT_MAX-50;
+	}
+	if(Townhall[0].first<=2 && EnemyTownhall[0].first==4){
+		return INT_MIN+10;
+	}
+	if(Townhall[0].first<=2 && EnemyTownhall[0].first==3){
+		return INT_MIN+20;
+	}
+	if(EnemyTownhall[0].first<=2 && Townhall[0].first==4){
+		return INT_MAX-10;
+	}
+	if(EnemyTownhall[0].first<=2 && Townhall[0].first==3){
+		return INT_MAX-20;
+	}
+	if(flag)
+		return INT_MAX-50;
+	else
+		return INT_MAX-50;
+}
+
 pair<moves, int> min_value(bool townhall_kill, int **board, int n, int m, int alpha, int beta, moves ms, int min_val, pair<int,int> *Soldier, pair<int,int> *EnemySoldier, pair<int,int> *Townhall, pair<int,int> *EnemyTownhall, vector<pair<pair<int,int>,int> > cannon, vector<pair<pair<int,int>,int> > Enemycannon){
 	min_val++;
 	if(min_val>cutoff)
 		return make_pair(ms, eval(townhall_kill,board,n,m, Soldier, EnemySoldier, Townhall, EnemyTownhall, cannon, Enemycannon));
 	vector<moves> v = valid_moves_enemy(board,EnemySoldier,n,m,Enemycannon);
-	if (v.size()==0)
-		return make_pair(ms, -1*utility(Townhall,EnemyTownhall));
+	if (v.size()==0 || EnemyTownhall[0].first<=2 ||  Townhall[0].first<=2){
+		cerr<<"Enemy gone"<<v.size()<<" "<<EnemyTownhall[0].first<<" "<<Townhall[0].first<<endl;
+		return make_pair(ms, utility(true,townhall_kill,Townhall,EnemyTownhall));
+	}
 
 	pair<moves, int> min_child;
 	min_child.second=INT_MAX;
@@ -1275,8 +1290,10 @@ pair<moves, int> max_value(bool townhall_kill, int **board, int n, int m, int al
 
 	vector<moves> v = valid_moves(board,Soldier,n,m,cannon);
 
-	if (v.size()==0)
-		return make_pair(ms, utility(Townhall, EnemyTownhall));
+	if (v.size()==0 || EnemyTownhall[0].first<=2 || Townhall[0].first<=2){
+		cerr<<"We gone"<<v.size()<<" "<<EnemyTownhall[0].first<<" "<<Townhall[0].first<<endl;
+		return make_pair(ms, utility(false,townhall_kill,Townhall, EnemyTownhall));
+	}
 
 	pair<moves, int> max_child;
 	max_child.second=INT_MIN;
