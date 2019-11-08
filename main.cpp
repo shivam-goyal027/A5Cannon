@@ -746,7 +746,6 @@ vector<moves> valid_moves(int **board, pair<int,int> *Soldier,int n,int m,vector
 	return ans1;
 }
 
-
 ////can be optimised by combining or checking just for 4 townhalls/////////////
 int enemy_soldier_shoots(int **board, vector<pair<pair<int,int>,int> > Enemycannon, int n, int m){
 	int count = 0;
@@ -987,6 +986,154 @@ int townhall_shoots(int **board, vector<pair<pair<int,int>,int> > cannon, int n,
 	}	
 	return count;
 }
+
+int player_support_enemy(int **board, pair<int,int> *a, int n, int m, vector<pair<pair<int,int>,int> > Enemycannon){
+	int count=0;
+	int x,y,head;
+	// set<pair<int, int>> positions;
+	for(int i=1;i<=(3*(m/2))+1;i++){
+		if(a[i].first!=-1 && a[i].second<=5){
+			if(a[i].second-1>=0 && board[a[i].first][a[i].second-1]==-1){
+				count++;
+			}
+			if(a[i].second-1>=0 && a[i].first+1<m && board[a[i].first+1][a[i].second-1]==-1){
+				count++;
+			}
+			if(a[i].second-1>=0 && a[i].first-1>=0 && board[a[i].first-1][a[i].second-1]==-1){
+				count++;
+			}
+			if(a[i].first+1<m && board[a[i].first+1][a[i].second]==-1){
+				count++;
+			}
+			if(a[i].first-1>=0 && board[a[i].first-1][a[i].second]==-1){
+				count++;
+			}
+		}
+	}
+	for(int i=0;i<Enemycannon.size();i++){
+		x=Enemycannon[i].first.first;
+		y=Enemycannon[i].first.second;
+		head=Enemycannon[i].second;
+		if(head==1){
+			if(x+2<m && board[x+2][y]==-1 && y<=n-4)
+				count++;
+			if(x+3<m && board[x+3][y]==-1 && y<=n-4)
+				count++;
+		}else if(head==-1){
+			if(x-2>=0 && board[x-2][y]==-1 && y<=n-4)
+				count++;
+			if(x-3>=0 && board[x-3][y]==-1 && y<=n-4)
+				count++;
+		}else if(head==2){
+			if(y+2<n && board[x][y+2]==-1 && y+2<=n-4)
+				count++;
+			if(y+3<n && board[x][y+3]==-1 && y+3<=n-4)
+				count++;
+		}else if(head==-2){
+			if(y-2>=0 && board[x][y-2]==-1 && y-2<=n-4)
+				count++;
+			if(y-3>=0 && board[x][y-3]==-1 && y-3<=n-4)
+				count++;
+		}else if(head==3){
+			if(x+2<m && y-2>=0 && board[x+2][y-2]==-1 && y-2<=n-4)
+				count++;
+			if(x+3<m && y-3>=0 && board[x+3][y-3]==-1 && y-3<=n-4)
+				count++;
+		}else if(head==-3){
+			if(x-2>=0 && y+2<n && board[x-2][y+2]==-1 && y+2<=n-4)
+				count++;
+			if(x-3>=0 && y+3<n && board[x-3][y+3]==-1 && y+3<=n-4)
+				count++;
+		}else if(head==4){
+			if(y+2<n && x+2<m && board[x+2][y+2]==-1 && y+2<=n-4)
+				count++;
+			if(y+3<n && x+3<m && board[x+3][y+3]==-1 && y+3<=n-4)
+				count++;
+		}else if(head==-4){
+			if(y-2>=0 && x-2>=0 && board[x-2][y-2]==-1 && y-2<=n-4)
+				count++;
+			if(y-3>=0 && x-3>=0 && board[x-3][y-3]==-1 && y-3<=n-4)
+				count++;
+		}
+	}
+	return count;
+}
+
+int player_support(int **board, pair<int,int> *a, int n, int m, vector<pair<pair<int,int>,int> > cannon){
+	int count=0;
+	int x,y,head;
+	// set<pair<int, int>> positions;
+	for(int i=1;i<=(3*(m/2))+1;i++){
+		if(a[i].first!=-1 && a[i].second>=2){
+			if(a[i].second+1<n && board[a[i].first][a[i].second+1]==1){
+				count++;
+			}
+			if(a[i].second+1<n && a[i].first+1<m && board[a[i].first+1][a[i].second+1]==1){
+				count++;
+			}
+			if(a[i].second+1<n && a[i].first-1>=0 && board[a[i].first-1][a[i].second+1]==1){
+				count++;
+			}
+			if(a[i].first+1<m && board[a[i].first+1][a[i].second]==1){
+				count++;
+			}
+			cerr<<a[i].first<<" "<<endl;
+			cerr<<a[i].second<<endl;
+			cerr<<board[a[i].first-1][a[i].second]<<endl;
+			if(a[i].first-1>=0 && board[a[i].first-1][a[i].second]==1){
+				count++;
+			}
+		}
+	}
+	for(int i=0;i<cannon.size();i++){
+		x=cannon[i].first.first;
+		y=cannon[i].first.second;
+		head=cannon[i].second;
+		if(head==1){
+			if(x+2<m && board[x+2][y]==1 && y>=3)
+				count++;
+			if(x+3<m && board[x+3][y]==1 && y>=3)
+				count++;
+		}else if(head==-1){
+			if(x-2>=0 && board[x-2][y]==1 && y>=3)
+				count++;
+			if(x-3>=0 && board[x-3][y]==1 && y>=3)
+				count++;
+		}else if(head==2){
+			if(y+2<n && board[x][y+2]==1 && y+2>=3)
+				count++;
+			if(y+3<n && board[x][y+3]==1 && y+3>=3)
+				count++;
+		}else if(head==-2){
+			if(y-2>=0 && board[x][y-2]==1 && y-2>=3)
+				count++;
+			if(y-3>=0 && board[x][y-3]==1 && y-3>=3)
+				count++;
+		}else if(head==3){
+			if(x+2<m && y-2>=0 && board[x+2][y-2]==1 && y-2>=3)
+				count++;
+			if(x+3<m && y-3>=0 && board[x+3][y-3]==1 && y-3>=3)
+				count++;
+		}else if(head==-3){
+			if(x-2>=0 && y+2<n && board[x-2][y+2]==1 && y+2>=3)
+				count++;
+			if(x-3>=0 && y+3<n && board[x-3][y+3]==1 && y+3>=3)
+				count++;
+		}else if(head==4){
+			if(y+2<n && x+2<m && board[x+2][y+2]==1 && y+2>=3)
+				count++;
+			if(y+3<n && x+3<m && board[x+3][y+3]==1 && y+3>=3)
+				count++;
+		}else if(head==-4){
+			if(y-2>=0 && x-2>=0 && board[x-2][y-2]==1 && y-2>=3)
+				count++;
+			if(y-3>=0 && x-3>=0 && board[x-3][y-3]==1 && y-3>=3)
+				count++;
+		}
+	}
+	return count;
+}
+
 /////////////////////////////////////////////////////////////////////////////////
 int eval(bool townhall_kill, int **board,int n,int m, pair<int,int> *Soldier,pair<int,int> *EnemySoldier, pair<int,int> *Townhall, pair<int,int> *EnemyTownhall, vector<pair<pair<int,int>,int> > cannon, vector<pair<pair<int,int>,int> > Enemycannon){
 	if(townhall_kill)
