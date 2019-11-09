@@ -1470,7 +1470,7 @@ pair<moves, int> max_value_enemy(bool warn,int player_num,bool townhall_kill,int
 	if(max_val>cutoff(player_num))
 		return make_pair(ms, eval_enemy(townhall_kill,board,n,m, Soldier, EnemySoldier, Townhall, EnemyTownhall, cannon, Enemycannon));
 	
-	vector<moves> v = valid_moves_enemy(warn,board,Soldier,n,m,cannon);
+	vector<moves> v = valid_moves_enemy(warn,board,EnemySoldier,n,m,Enemycannon);
 	
 	if (v.size()==0 || EnemyTownhall[0].first<=(m/2)-2 ||  Townhall[0].first<=(m/2)-2){
 		int val=utility_enemy(false,townhall_kill,Townhall,EnemyTownhall,n,m,max_val);
@@ -1542,6 +1542,7 @@ pair<moves, int> max_value_enemy(bool warn,int player_num,bool townhall_kill,int
 
 moves alpha_beta_enemy(bool warn,int **board, int n, int m, pair<int,int> *Soldier,pair<int,int> *EnemySoldier, pair<int,int> *Townhall, pair<int,int> *EnemyTownhall, vector<pair<pair<int,int>,int> > cannon, vector<pair<pair<int,int>,int> > Enemycannon){
 	cerr<<"depth "<<cutoff(Soldier[0].first)<<endl;
+	if(warn) cerr<<warn<<endl;
 	moves temp;
 	temp.a='S'; temp.b=0; temp.c=0; temp.d='M'; temp.e=0; temp.f=0;
 	global_bool_enemy=false;
@@ -1810,7 +1811,7 @@ int main(int argc, char* argv[]){
 		EnemyTownhall[i+1]= (make_pair((2*i)+1,n-1));
 		board[(2*i)+1][n-1]=-2;
 	}
-	int it=0; bool warn=false, x_move=false, y_move=false;
+	bool warn=false, x_move=false, y_move=false;
 	// save_move[0].a='S';save_move[0].b=0;save_move[0].c=0;save_move[0].d='M';save_move[0].e=0;save_move[0].f=0;
 	// save_move[1].a='S';save_move[1].b=1;save_move[1].c=1;save_move[1].d='M';save_move[1].e=1;save_move[1].f=1;
 	// save_move[2].a='S';save_move[2].b=2;save_move[2].c=2;save_move[2].d='M';save_move[2].e=2;save_move[2].f=2;
@@ -1847,11 +1848,11 @@ int main(int argc, char* argv[]){
 			Cannon =update_cannons(board,Soldier,n,m);
 			EnemyCannon=update_enemy_cannons(board,EnemySoldier,n,m);
 			if(x_move && y_move){
-				M=alpha_beta_enemy(true,board,n,m,Soldier,EnemySoldier,Townhall,EnemyTownhall,Cannon,EnemyCannon);
+				M=alpha_beta(true,board,n,m,Soldier,EnemySoldier,Townhall,EnemyTownhall,Cannon,EnemyCannon);
 				x_move=false;y_move=false;
 			}
 			else
-				M=alpha_beta_enemy(false,board,n,m,Soldier,EnemySoldier,Townhall,EnemyTownhall,Cannon,EnemyCannon);
+				M=alpha_beta(false,board,n,m,Soldier,EnemySoldier,Townhall,EnemyTownhall,Cannon,EnemyCannon);
 			if(M.d=='B' && board[M.e][M.f]==0)
 				x_move=true;
 			cout<<M.a<<" "<<M.b<<" "<<M.c<<" "<<M.d<<" "<<M.e<<" "<<M.f<<endl;
