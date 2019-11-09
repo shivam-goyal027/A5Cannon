@@ -1336,7 +1336,7 @@ pair<moves, int> max_value_enemy(bool warn, moves saved,int player_num,bool town
 	}
 	for(int i=0;i<v.size();i++){
 		if(warn && v[i].a==saved.a && v[i].b==saved.b && v[i].c==saved.c && v[i].d==saved.d && v[i].e==saved.e && v[i].f==saved.f){
-			cerr<<"same move found"<<endl;
+			// cerr<<"same move found"<<endl;
 			continue;
 		}
 		//copy(begin(Soldier), end(Soldier), begin(temp_soldier));
@@ -1387,7 +1387,7 @@ pair<moves, int> max_value_enemy(bool warn, moves saved,int player_num,bool town
 
 moves alpha_beta_enemy(bool warn, moves saved,int **board, int n, int m, pair<int,int> *Soldier,pair<int,int> *EnemySoldier, pair<int,int> *Townhall, pair<int,int> *EnemyTownhall, vector<pair<pair<int,int>,int> > cannon, vector<pair<pair<int,int>,int> > Enemycannon){
 	cerr<<"depth "<<cutoff(Soldier[0].first)<<endl;
-	cerr<<"saved move"<<saved.a<<saved.b<<saved.c<<saved.e<<saved.f<<endl;
+	cerr<<"saved move"<<saved.a<<saved.b<<saved.c<<saved.d<<saved.e<<saved.f<<" "<<warn<<endl;
 	moves temp;
 	temp.a='S'; temp.b=0; temp.c=0; temp.d='M'; temp.e=0; temp.f=0;
 	global_bool_enemy=false;
@@ -1546,7 +1546,7 @@ pair<moves, int> max_value(bool warn, moves saved,int player_num,bool townhall_k
 	}
 	for(int i=0;i<v.size();i++){
 		if(warn && v[i].a==saved.a && v[i].b==saved.b && v[i].c==saved.c && v[i].d==saved.d && v[i].e==saved.e && v[i].f==saved.f){
-			cerr<<"same move found"<<endl;
+			// cerr<<"same move found"<<endl;
 			continue;
 		}
 		//copy(begin(Soldier), end(Soldier), begin(temp_soldier));
@@ -1593,7 +1593,7 @@ pair<moves, int> max_value(bool warn, moves saved,int player_num,bool townhall_k
 
 moves alpha_beta(bool warn, moves saved,int **board, int n, int m, pair<int,int> *Soldier,pair<int,int> *EnemySoldier, pair<int,int> *Townhall, pair<int,int> *EnemyTownhall, vector<pair<pair<int,int>,int> > cannon, vector<pair<pair<int,int>,int> > Enemycannon){
 	cerr<<"depth "<<cutoff(Soldier[0].first)<<endl;
-	cerr<<"saved move"<<saved.a<<saved.b<<saved.c<<saved.e<<saved.f<<endl;
+	cerr<<"saved move"<<saved.a<<saved.b<<saved.c<<saved.d<<saved.e<<saved.f<<" "<<warn<<endl;
 	moves temp;
 	temp.a='S'; temp.b=0; temp.c=0; temp.d='M'; temp.e=0; temp.f=0;
 	global_bool=false;
@@ -1662,16 +1662,20 @@ int main(int argc, char* argv[]){
 	}
 	moves save_move[2]; int it=0; bool warn=false;
 	save_move[0].a='S';save_move[0].b=0;save_move[0].c=0;save_move[0].d='M';save_move[0].e=0;save_move[0].f=0;
+	save_move[0].a='S';save_move[0].b=11;save_move[0].c=11;save_move[0].d='M';save_move[0].e=11;save_move[0].f=11;
 	if(id==1){
 		while(true){
 			M=alpha_beta_enemy(warn,save_move[0],board,n,m,Soldier,EnemySoldier,Townhall,EnemyTownhall,Cannon,EnemyCannon);
 			save_move[it].a=M.a;save_move[it].b=M.b;save_move[it].c=M.c;save_move[it].d=M.d;save_move[it].e=M.e;save_move[it].f=M.f;
 			it++;
-			if(it==2){
-				if(save_move[0].a==save_move[1].a && save_move[0].b==save_move[1].b && save_move[0].c==save_move[1].c && save_move[0].d==save_move[1].d && save_move[0].e==save_move[1].e && save_move[0].f==save_move[1].f)
-					warn = true;
+		
+			if(save_move[0].a==save_move[1].a && save_move[0].b==save_move[1].b && save_move[0].c==save_move[1].c && save_move[0].d==save_move[1].d && save_move[0].e==save_move[1].e && save_move[0].f==save_move[1].f)
+				warn = true;
+			else
+				warn = false;
+			if(it==2)
 				it=0;
-			}
+			
 			cout<<M.a<<" "<<M.b<<" "<<M.c<<" "<<M.d<<" "<<M.e<<" "<<M.f<<endl;
 			do_move_enemy(M,board,Soldier,EnemySoldier,Townhall,EnemyTownhall);
 			Cannon =update_cannons(board,Soldier,n,m);
@@ -1691,11 +1695,12 @@ int main(int argc, char* argv[]){
 			M=alpha_beta(warn,save_move[0],board,n,m,Soldier,EnemySoldier,Townhall,EnemyTownhall,Cannon,EnemyCannon);
 			save_move[it].a=M.a;save_move[it].b=M.b;save_move[it].c=M.c;save_move[it].d=M.d;save_move[it].e=M.e;save_move[it].f=M.f;
 			it++;
-			if(it==2){
-				if(save_move[0].a==save_move[1].a && save_move[0].b==save_move[1].b && save_move[0].c==save_move[1].c && save_move[0].d==save_move[1].d && save_move[0].e==save_move[1].e && save_move[0].f==save_move[1].f)
-					warn = true;
+			if(save_move[0].a==save_move[1].a && save_move[0].b==save_move[1].b && save_move[0].c==save_move[1].c && save_move[0].d==save_move[1].d && save_move[0].e==save_move[1].e && save_move[0].f==save_move[1].f)
+				warn = true;
+			else
+				warn = false;
+			if(it==2)
 				it=0;
-			}
 			save_move[it].a=M.a;save_move[it].b=M.b;save_move[it].c=M.c;save_move[it].d=M.d;save_move[it].e=M.e;save_move[it].f=M.f;
 			cout<<M.a<<" "<<M.b<<" "<<M.c<<" "<<M.d<<" "<<M.e<<" "<<M.f<<endl;
 			do_move(M,board,Soldier,EnemySoldier,Townhall,EnemyTownhall);
