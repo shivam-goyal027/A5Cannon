@@ -1146,17 +1146,18 @@ int eval(bool townhall_kill, int **board,int n,int m, pair<int,int> *Soldier,pai
 
 // int cutoff = 4;
 int cutoff(int player_num){
-	if(player_num<6)
-		return 8;
-	if(player_num<8)
-		return 7;
-	if(player_num==12)
-		return 3;
-	if(player_num>10)
-		return 4;
-	if(player_num==10)
-		return 5;
-	return 6;
+	return 4;
+	// if(player_num<6)
+	// 	return 8;
+	// if(player_num<8)
+	// 	return 7;
+	// if(player_num==12)
+	// 	return 3;
+	// if(player_num>10)
+	// 	return 4;
+	// if(player_num==10)
+	// 	return 5;
+	// return 6;
 }
 
 int eval_enemy(bool townhall_kill, int **board,int n,int m, pair<int,int> *Soldier,pair<int,int> *EnemySoldier, pair<int,int> *Townhall, pair<int,int> *EnemyTownhall, vector<pair<pair<int,int>,int> > cannon, vector<pair<pair<int,int>,int> > Enemycannon){
@@ -1334,8 +1335,10 @@ pair<moves, int> max_value_enemy(bool warn, moves saved,int player_num,bool town
 		a[i]=new int[m];
 	}
 	for(int i=0;i<v.size();i++){
-		if(warn && v[i].a==saved.a && v[i].b==saved.b && v[i].c==saved.c && v[i].d==saved.d && v[i].e==saved.e && v[i].f==saved.f)
+		if(warn && v[i].a==saved.a && v[i].b==saved.b && v[i].c==saved.c && v[i].d==saved.d && v[i].e==saved.e && v[i].f==saved.f){
+			cerr<<"same move found"<<endl;
 			continue;
+		}
 		//copy(begin(Soldier), end(Soldier), begin(temp_soldier));
 
 		for(int l=0;l<=3*(m/2);l++)
@@ -1383,7 +1386,8 @@ pair<moves, int> max_value_enemy(bool warn, moves saved,int player_num,bool town
 }
 
 moves alpha_beta_enemy(bool warn, moves saved,int **board, int n, int m, pair<int,int> *Soldier,pair<int,int> *EnemySoldier, pair<int,int> *Townhall, pair<int,int> *EnemyTownhall, vector<pair<pair<int,int>,int> > cannon, vector<pair<pair<int,int>,int> > Enemycannon){
-	
+	cerr<<"depth "<<cutoff(Soldier[0].first)<<endl;
+	cerr<<"saved move"<<saved.a<<saved.b<<saved.c<<saved.e<<saved.f<<endl;
 	moves temp;
 	temp.a='S'; temp.b=0; temp.c=0; temp.d='M'; temp.e=0; temp.f=0;
 	global_bool_enemy=false;
@@ -1391,7 +1395,7 @@ moves alpha_beta_enemy(bool warn, moves saved,int **board, int n, int m, pair<in
 	global_bool_enemy_bad=false;
 	global_level_enemy_bad=0;
 	pair<moves, int> ans = max_value_enemy(warn,saved,Soldier[0].first,false, board, n, m, INT_MIN, INT_MAX, temp, -1, Soldier, EnemySoldier, Townhall, EnemyTownhall, cannon, Enemycannon);
-	cerr<<ans.second<<endl;
+	// cerr<<"ans.second= "<<ans.second<<endl;
 	return ans.first;
 }
 bool global_bool;
@@ -1541,8 +1545,10 @@ pair<moves, int> max_value(bool warn, moves saved,int player_num,bool townhall_k
 		a[i]=new int[m];
 	}
 	for(int i=0;i<v.size();i++){
-		if(warn && v[i].a==saved.a && v[i].b==saved.b && v[i].c==saved.c && v[i].d==saved.d && v[i].e==saved.e && v[i].f==saved.f)
+		if(warn && v[i].a==saved.a && v[i].b==saved.b && v[i].c==saved.c && v[i].d==saved.d && v[i].e==saved.e && v[i].f==saved.f){
+			cerr<<"same move found"<<endl;
 			continue;
+		}
 		//copy(begin(Soldier), end(Soldier), begin(temp_soldier));
 
 		for(int l=0;l<=3*(m/2);l++)
@@ -1586,7 +1592,8 @@ pair<moves, int> max_value(bool warn, moves saved,int player_num,bool townhall_k
 }
 
 moves alpha_beta(bool warn, moves saved,int **board, int n, int m, pair<int,int> *Soldier,pair<int,int> *EnemySoldier, pair<int,int> *Townhall, pair<int,int> *EnemyTownhall, vector<pair<pair<int,int>,int> > cannon, vector<pair<pair<int,int>,int> > Enemycannon){
-	cerr<<cutoff(Soldier[0].first)<<endl;
+	cerr<<"depth "<<cutoff(Soldier[0].first)<<endl;
+	cerr<<"saved move"<<saved.a<<saved.b<<saved.c<<saved.e<<saved.f<<endl;
 	moves temp;
 	temp.a='S'; temp.b=0; temp.c=0; temp.d='M'; temp.e=0; temp.f=0;
 	global_bool=false;
