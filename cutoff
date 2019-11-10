@@ -1,0 +1,12 @@
+int cutoff(int player_num, int enemy_num){
+	//return 4;
+	if(player_num<5 && enemy_num<5)
+		return 8;
+	if(player_num<=10 && enemy_num<9)
+		return 5;
+	if(player_num<=8 && enemy_num<7)
+		return 6;
+	if(player_num>10 || enemy_num>10)
+		return 4;
+	return 5;
+}
